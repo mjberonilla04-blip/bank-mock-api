@@ -1,0 +1,736 @@
+{
+  "info": {
+    "_postman_id": "4b170111-3d9d-4fc6-a933-7ad1e4a8c3b5",
+    "name": "Bank Mock API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58673668",
+    "_collection_link": "https://go.postman.co/collection/58673668-4b170111-3d9d-4fc6-a933-7ad1e4a8c3b5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "SCENARIOS",
+      "item": [
+        {
+          "name": "Account Missing",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-mock-scenario",
+                "value": "account-is-missing"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/ACCT-1792480873082-069062",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "ACCT-1792480873082-069062"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Insufficient Funds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-mock-scenario",
+                "value": "insufficient-funds"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 1800\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/ACCT-1792480873082-069061/withdraw",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "ACCT-1792480873082-069061",
+                "withdraw"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Deposit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-mock-scenario",
+                "value": "invalid-deposit"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/ACCT-1792550091898-161947/deposit",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "ACCT-1792550091898-161947",
+                "deposit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Account Frozen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-mock-scenario",
+                "value": "account-frozen"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 100\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/ACCT-1792481022737-395772/withdraw",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "ACCT-1792481022737-395772",
+                "withdraw"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transfer Failed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-mock-scenario",
+                "value": "transfer-failed"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"fromAccountId\": \"ACCT-1792477111516-045371\",\r\n    \"toAccountId\": \"ACCT-1792477123919-643720\",\r\n    \"amount\": 5000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/transfers",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "transfers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "REQUESTS",
+      "item": [
+        {
+          "name": "Create an Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Convert response to JSON\r\nlet response = pm.response.json();\r\n\r\n// Save accountId as a Collection Variable\r\npm.collectionVariables.set(\"accountId\", response.accountId);\r\n\r\n// Verify accountId exists\r\npm.test(\"Account ID was generated\", function () {\r\n    pm.expect(response.accountId).to.exist;\r\n    pm.expect(response.accountId).to.not.be.empty;\r\n});\r\n\r\n// Log it to Postman Console\r\nconsole.log(\"Saved Account ID:\", response.accountId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountName\": \"{{accountName}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create an Account Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n    \"toAccountId\",\r\n    response.accountId\r\n);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountName\": \"{{accountName}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create an Account Copy 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n    \"fromAccountId\",\r\n    response.accountId\r\n);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountName\": \"{{accountName}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Bank Accounts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Account Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Get Account Details Successful\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/ACCT-1792481022737-395772",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "ACCT-1792481022737-395772"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Balance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Check Balance Successful\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId}}/balance",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId}}",
+                "balance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deposit Money",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Deposit Successful\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 10000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId}}/deposit",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId}}",
+                "deposit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Withdraw Money",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Withdrawal Successful\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\":1800\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId}}/withdraw",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId}}",
+                "withdraw"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transfer Between Accounts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Transfer Successful\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fromAccountId\":\"{{fromAccountId}}\",\r\n  \"toAccountId\":\"{{toAccountId}}\",\r\n  \"amount\": 500\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/transfers",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "transfers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View Transaction History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Transaction History Retrieved Successfully\", () => {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/transactions",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "FLOW",
+      "item": [
+        {
+          "name": "Create Account - Francis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n    \"accountId\",\r\n    response.accountId\r\n);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountName\": \"Francis Benedict Nievera\",\r\n  \"accountType\": \"Savings\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Account - Naomi",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountName\": \"Naomi Rain Ponce\",\r\n  \"accountType\": \"Savings\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Withdraw Money - Francis",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 15000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId}}/withdraw",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId}}",
+                "withdraw"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Withdraw Money - Naomi",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 3000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId1}}/withdraw",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId1}}",
+                "withdraw"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deposit Money - Francis",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "console.log(\"accountId =\", pm.collectionVariables.get(\"accountId\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 100000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/accounts/{{accountId}}/deposit",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "accounts",
+                "{{accountId}}",
+                "deposit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transfer Money from Francis to Naomi",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fromAccountId\": \"{{fromAccountId}}\",\r\n  \"toAccountId\": \"{{toAccountId}}\",\r\n  \"amount\": 15000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/transfers",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "transfers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": ""
+    },
+    {
+      "key": "accountId",
+      "value": ""
+    },
+    {
+      "key": "accountId1",
+      "value": ""
+    }
+  ]
+}
