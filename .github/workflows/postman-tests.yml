@@ -23,11 +23,13 @@ jobs:
 
       - name: Run Postman Collection
         run: |
-          newman run "Bank Mock API.postman_collection.json" \
-            -r cli,json,junit,htmlextra \
-            --reporter-json-export reports/newman-report.json \
-            --reporter-junit-export reports/newman-report.xml \
-            --reporter-htmlextra-export reports/newman-report.html
+              newman run "Bank Mock API.postman_collection.json" \
+              --env-var "BASE_URL=http://localhost:4500" \
+              -r cli,json,junit,htmlextra \
+              --reporter-json-export reports/newman-report.json \
+              --reporter-junit-export reports/newman-report.xml \
+              --reporter-htmlextra-export reports/newman-report.html
+
 
       - name: Upload Newman Reports
         uses: actions/upload-artifact@v4
